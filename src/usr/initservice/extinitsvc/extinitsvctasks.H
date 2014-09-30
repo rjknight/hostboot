@@ -133,7 +133,18 @@ const TaskInfo g_exttaskinfolist[]   =   {
             }
         },
 
+        /**
+         * @brief IPMI resource provider
+         */
+        {
+            "libipmi.so",                               // taskname
+            NULL,                                       // no ptr to fnct
+            {
 
+                START_TASK,                             // task type
+                EXT_IMAGE,                              // Extended Module
+            }
+        },
 
         /**
          * @brief   FSI SCOM Device Driver

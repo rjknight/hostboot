@@ -1,0 +1,5 @@
+config BMC_BT_LPC_IPMI
+    default n
+    depends on BMC_IPMI
+    help
+        Determines if the BMC uses the LPC bus for block-transfer IPMI traffic
