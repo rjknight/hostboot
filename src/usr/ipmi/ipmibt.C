@@ -48,16 +48,13 @@ namespace IPMI
 {
     ///
     /// @brief msg ctor
-    /// @param[in] i_netfun, the network function
-    /// @param[in] i_cmd, the network command
-    /// @param[in] i_data, the data for the command
+    /// @param[in] i_cmd, the network function & command
     /// @param[in] i_len, the length of the data
     /// @param[in] i_data, the data (malloc'd space)
     ///
-    BTMessage::BTMessage(const network_function i_netfun,
-                         const uint8_t i_cmd, const uint8_t i_len,
+    BTMessage::BTMessage(const command_t& i_cmd, const uint8_t i_len,
                          uint8_t* i_data):
-        Message(i_netfun, i_cmd, i_len, i_data)
+        Message(i_cmd, i_len, i_data)
     {
         // Sometimes we need to get back to this IPMI msg from the msg_t,
         // and sometimes we need to get the msg_t from the IPMI msg. So they
@@ -69,7 +66,7 @@ namespace IPMI
     ///
     /// @brief  Transimit - send the data out the device interface
     ///
-    errlHndl_t BTMessage::xmit(void)
+    errlHndl_t BTMessage::phy_xmit(void)
     {
         // When a uint8_t is constructed, it's initialied to 0. So,
         // this initializes the sequence counter to 0.
@@ -140,40 +137,36 @@ namespace IPMI
 
     ///
     /// @brief BTSyncMessage ctor
-    /// @param[in] i_netfun, the network function
-    /// @param[in] i_cmd, the network command
-    /// @param[in] i_data, the data for the command
+    /// @param[in] i_cmd, the network function & command
     /// @param[in] i_len, the length of the data
     /// @param[in] i_data, the data (malloc'd space)
     ///
-    BTSyncMessage::BTSyncMessage(const network_function i_netfun,
-                                 const uint8_t i_cmd, const uint8_t i_len,
+    BTSyncMessage::BTSyncMessage(const command_t& i_cmd,
+                                 const uint8_t i_len,
                                  uint8_t* i_data):
-        BTMessage(i_netfun, i_cmd, i_len, i_data)
+        BTMessage(i_cmd, i_len, i_data)
     {
     }
 
     ///
     /// @brief BTSyncMessage ctor
-    /// @param[in] i_netfun, the network function
-    /// @param[in] i_cmd, the network command
-    /// @param[in] i_data, the data for the command
+    /// @param[in] i_cmd, the network function & command
     /// @param[in] i_len, the length of the data
     /// @param[in] i_data, the data (malloc'd space)
     ///
-    BTAsyncMessage::BTAsyncMessage(const network_function i_netfun,
-                                   const uint8_t i_cmd, const uint8_t i_len,
+    BTAsyncMessage::BTAsyncMessage(const command_t& i_cmd,
+                                   const uint8_t i_len,
                                    uint8_t* i_data):
-        BTMessage(i_netfun, i_cmd, i_len, i_data)
+        BTMessage(i_cmd, i_len, i_data)
     {
     }
 
     ///
     /// @brief sync msg transmit
     ///
-    bool BTSyncMessage::xmit(respond_q_t& i_respondq)
+    bool BTSyncMessage::xmit(void)
     {
-        errlHndl_t err = BTMessage::xmit();
+        errlHndl_t err = BTMessage::phy_xmit();
 
         if (err)
         {
@@ -198,7 +191,7 @@ namespace IPMI
         // out on the response queue.
         else if (iv_state != EAGAIN)
         {
-            i_respondq[iv_seq] = iv_msg;
+            Singleton<IpmiRP>::instance().queueForResponse(*this);
         }
 
         // If we had an i/o error we want the idle loop to stop
@@ -210,9 +203,9 @@ namespace IPMI
     ///
     /// @brief async msg transmit
     ///
-    bool BTAsyncMessage::xmit(respond_q_t&)
+    bool BTAsyncMessage::xmit(void)
     {
-        errlHndl_t err = BTMessage::xmit();
+        errlHndl_t err = BTMessage::phy_xmit();
         bool io_error = (iv_state != 0);
 
         if (err)

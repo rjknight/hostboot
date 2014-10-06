@@ -27,6 +27,7 @@
 
 #include <map>
 #include <list>
+#include <time.h>
 #include <sys/msg.h>
 #include <errl/errlentry.H>
 #include <ipmi/ipmiif.H>
@@ -41,6 +42,7 @@ namespace IPMI
     };
 
     typedef std::list<msg_t*> send_q_t;
+    typedef std::list<msg_t*> timeout_q_t;
     typedef std::map<uint8_t,msg_t*> respond_q_t;
 
     // IPMI message base class. A thing which expects to be sent down a
@@ -89,10 +91,9 @@ namespace IPMI
 
         ///
         /// @brief transmit a message.
-        /// @param[in] i_respondq, a map: iv_key->msg_t
         /// @return true iff there was no transmission error
         ///
-        virtual bool xmit(respond_q_t& i_respondq) = 0;
+        virtual bool xmit(void) = 0;
 
         ///
         /// @brief receive a message.
@@ -122,14 +123,14 @@ namespace IPMI
 
         // Note: Some of these might turn out to be transport specific
         // if so, we'll just move them down in to the subclasses
-        uint8_t  iv_len;     // Length
-        uint8_t  iv_netfun;  // Network Function
-        uint8_t& iv_seq;     // Sequence number, reference to iv_key
-        uint8_t  iv_cmd;     // Command
-        uint8_t  iv_cc;      // Completion Code
-        uint8_t  iv_err;     // Driver things, like EAGAIN
-        uint8_t* iv_data;    // Pointer to the message data
-
+        uint8_t    iv_len;     // Length
+        uint8_t    iv_netfun;  // Network Function
+        uint8_t&   iv_seq;     // Sequence number, reference to iv_key
+        uint8_t    iv_cmd;     // Command
+        uint8_t    iv_cc;      // Completion Code
+        uint8_t    iv_err;     // Driver things, like EAGAIN
+        uint8_t*   iv_data;    // Pointer to the message data
+        timespec_t iv_timeout; // Abs time of when this message times-out
     private:
         // Disallow copying this class. Should suffice for disabling copy for
         // all subclasses too.

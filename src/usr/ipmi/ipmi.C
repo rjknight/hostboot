@@ -63,6 +63,9 @@ namespace IPMI
         iv_err(0),
         iv_data(i_data)
     {
+        iv_timeout.tv_sec = 0;
+        iv_timeout.tv_nsec = 0;
+
         errl(NULL);
     }
 
