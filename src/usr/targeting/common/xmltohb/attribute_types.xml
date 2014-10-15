@@ -455,6 +455,10 @@
         <name>SYSTEM_FIRMWARE_PROGRESS</name>
         <value>0x0F</value>
     </enumerator>
+     <enumerator>
+        <name>REBOOT_COUNT</name>
+        <value>0xC0</value>
+    </enumerator>
 </enumerationType>
 
 <attribute>
@@ -523,7 +527,7 @@ ID for the sensor number returned with the elog. -->
         pairs.</description>
     <simpleType>
         <uint16_t></uint16_t>
-        <array>32</array>
+        <array>16,2</array>
     </simpleType>
     <persistency>non-volatile</persistency>
     <readable/>
@@ -13792,6 +13796,36 @@ firmware notes: Platforms should initialize this attribute to AUTO (0)</descript
         <macro>DIRECT</macro>
     </hwpfToHbAttrMap>
 </attribute>
+<!-- For reconfig loop testing -->
+<attribute>
+  <id>RECONFIG_LOOP_TESTS</id>
+  <description> System attribute array that defines the reconfig loop test cases
+      consumer: istep dispatcher reconfigLoopTestRunner function
+      This array is loaded with data via attribute override. The attribute is
+      then read  and then overlayed onto a test case structure.
+  </description>
+  <simpleType>
+      <uint64_t></uint64_t>
+      <array>5</array>
+  </simpleType>
+  <persistency>volatile-zeroed</persistency>
+  <readable/>
+  <writeable/>
+</attribute>
+
+<attribute>
+    <id>RECONFIG_LOOP_TESTS_ENABLE</id>
+    <description>
+        Indicates whether reconfigure loop tests are enabled.
+        This attribute is set via attribute override
+    </description>
+    <simpleType>
+        <uint8_t></uint8_t>
+    </simpleType>
+    <persistency>volatile-zeroed</persistency>
+    <readable/>
+    <writeable/>
+</attribute>
 
 <attribute>
     <id>MEM_VDD_OFFSET_MILLIVOLTS</id>
@@ -14291,31 +14325,6 @@ firmware notes: Platforms should initialize this attribute to AUTO (0)</descript
     <writeable/>
     <hwpfToHbAttrMap>
         <id>ATTR_MSS_POWER_CONTROL_REQUESTED</id>
-        <macro>DIRECT</macro>
-    </hwpfToHbAttrMap>
-</attribute>
-
-<attribute>
-    <id>MSS_POWER_CONTROL_CAPABLE</id>
-    <description>
-        Supported memory power control types
-
-        0x00 = NONE
-        0x01 = SLOWEXIT_CAPABLE
-        0x02 = FASTEXIT_CAPABLE
-        0x03 = FASTSLOW_CAPABLE
-
-    </description>
-    <simpleType>
-        <uint8_t>
-            <default>0x00</default>
-        </uint8_t>
-    </simpleType>
-    <persistency>volatile</persistency>
-    <readable/>
-    <writeable/>
-    <hwpfToHbAttrMap>
-        <id>ATTR_MSS_POWER_CONTROL_CAPABLE</id>
         <macro>DIRECT</macro>
     </hwpfToHbAttrMap>
 </attribute>

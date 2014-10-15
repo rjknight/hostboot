@@ -696,4 +696,32 @@ namespace IPMI
         return err;
     }
 
+    ///
+    /// @brief Synchronously send a set sensor reading command
+    ///
+    errlHndl_t send_set_sensor_reading_cmd(
+                          set_sensor_reading_request * i_cmd,
+                          completion_code& o_completion_code )
+    {
+        static const size_t cmd_header = 3;  // $TODO verify this size
+
+        size_t len = cmd_header + sizeof( set_sensor_reading_request );
+
+        uint8_t* data = new uint8_t[len];
+
+        IPMI::completion_code cc = IPMI::CC_OK;
+
+        // copy the sensor reading to the data buffer
+        memcpy( data + cmd_header, i_cmd, sizeof(set_sensor_reading_request));
+
+        // We're done with i_data, but the caller deletes it.
+        errlHndl_t err = sendrecv(IPMI::set_sensor_reading(), cc, len, data);
+
+        o_completion_code = cc;
+
+        delete[] data;
+
+        return err;
+    }
+
 };

@@ -1854,9 +1854,23 @@ sub generate_sys
     <attribute>
         <id>IPMI_SENSORS</id>
         <default>
-            0x09,0x05,0x0a,0x08,0x07,0x07,0x08,0x04,0x0b,0x09,
-            0x0c,0x06,0x0d,0x00,0x0F,0xFF
-            </default>
+            0x07,0x07,
+            0x08,0x04,
+            0x09,0x05,
+            0x0a,0x08,
+            0x0b,0x09,
+            0x0c,0x06,
+            0x0d,0x00,
+            0x0e,0xFF,
+            0x0F,0xFF,
+            0xFF,0xFF,
+            0xFF,0xFF,
+            0xFF,0xFF,
+            0xFF,0xFF,
+            0xFF,0xFF,
+            0xFF,0xFF,
+            0xFF,0xFF
+       </default>
     </attribute>\n";
 
     }
@@ -2549,7 +2563,24 @@ sub generate_proc
         print "<!-- IPMI Sensor numbers for processor status -->
     <attribute>
         <id>IPMI_SENSORS</id>
-        <default>0x05, 0x03, 0x01, 0x12</default>
+        <default>
+            0x01, 0x12,
+            0x05, 0x03,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF
+        </default>
     </attribute>\n";
     }
 
@@ -2637,7 +2668,24 @@ sub generate_ex_core
       print "\n<!-- IPMI Sensor numbers for Core status -->
     <attribute>
         <id>IPMI_SENSORS</id>
-         <default>0x05, 0x02,0x01, 0x13 </default>
+         <default>
+             0x01, 0x13,
+             0x05, 0x02,
+             0xFF, 0xFF,
+             0xFF, 0xFF,
+             0xFF, 0xFF,
+             0xFF, 0xFF,
+             0xFF, 0xFF,
+             0xFF, 0xFF,
+             0xFF, 0xFF,
+             0xFF, 0xFF,
+             0xFF, 0xFF,
+             0xFF, 0xFF,
+             0xFF, 0xFF,
+             0xFF, 0xFF,
+             0xFF, 0xFF,
+             0xFF, 0xFF
+         </default>
      </attribute>\n";
     }
 
@@ -2743,7 +2791,20 @@ sub generate_pcies
     my $proc_name = "n${node}:p${proc}";
     print "\n<!-- $SYSNAME n${node}p${proc} PCI units -->\n";
     my $max_index = 2;
-    # TODO RTC: 94803
+
+    # TODO RTC: 116091
+    # Note: Originally the MRW parser created 3 PCI targets for every processor
+    # using a hard coded max_index value of 2.  Defect SW238553 added logic to
+    # differentiate the number of targets based on processor type (3 for Murano,
+    # 4 for Brazos).  This was erroneous, but by the time the problem was
+    # caught, it was too late in the release process to fix because the change
+    # would end up renumbering the HUID space.  Since the extra target is
+    # benign, it was decided to leave the bad code in for the remainder of P8.
+    # This issue should be fixed in the first release of P9.  If the number of
+    # PCI targets will be fixed across all P9 processors, simply remove the
+    # dynamic selection code in favor of a hard coded value.  Otherwise, make
+    # the computation data driven by reading the # of PCI targets from
+    # appropriate MRW processor part.
     if ($CHIPNAME eq "venice")
     {
         $max_index = 3;
@@ -3420,7 +3481,24 @@ sub generate_centaur
       print "<!-- IPMI Sensor numbers for Centaur status -->
     <attribute>
         <id>IPMI_SENSORS</id>
-        <default>0x05, 0xFF,0x01, 0xFF</default>
+        <default>
+            0x01, 0xFF,
+            0x05, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF
+        </default>
     </attribute>\n";
 
     }
@@ -3625,7 +3703,25 @@ sub generate_is_dimm
             print "\n<!-- IPMI Sensor numbers for DIMM status -->
     <attribute>
         <id>IPMI_SENSORS</id>
-        <default>0x05, 0x01,0x01, 0xFF</default>
+        <default>
+            0x01, 0xFF,
+            0x05, 0x01,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF
+
+        </default>
     </attribute>\n";
         }
 
@@ -3777,7 +3873,24 @@ sub generate_dimm
         print "\n<!-- IPMI Sensor numbers for DIMM status -->
     <attribute>
         <id>IPMI_SENSORS</id>
-        <default>0x05,0x01,0x01,0xFF</default>
+        <default>
+            0x01, 0xFF,
+            0x05, 0x01,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF,
+            0xFF, 0xFF
+        </default>
     </attribute>\n";
 
     }

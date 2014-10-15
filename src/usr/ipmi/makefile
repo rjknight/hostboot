@@ -25,10 +25,14 @@
 ROOTPATH = ../../..
 MODULE = ipmi
 
+EXTRAINCDIR += ${ROOTPATH}/src/include/usr/ipmi/
+EXTRAINCDIR += ${ROOTPATH}/obj/genfiles/
+
 OBJS += ipmimsg.o
 OBJS += ipmibt.o
 OBJS += ipmirp.o
 OBJS += ipmidd.o
+OBJS += ipmisensor.o
 
 #SUBDIRS += test.d
 

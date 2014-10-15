@@ -102,6 +102,18 @@ namespace IPMI
         CC_UNKBAD    = 0xff
     };
 
+
+    struct set_sensor_reading_request
+    {
+        uint8_t   sensor_number;
+        uint8_t   operation;
+        uint8_t   sensor_reading;
+        uint16_t  assertion_mask;
+        uint16_t  deassertion_mask;
+        uint8_t   event_data[3];
+    } PACKED;
+
+
     //
     // Network function, command pairs.
     //
@@ -124,10 +136,13 @@ namespace IPMI
     { return std::make_pair(NETFUN_STORAGE, 0x49); }
 
 
-    // Sensor messages
+    // event messages
     inline const command_t platform_event(void)
     { return std::make_pair(NETFUN_SENSOR, 0x02); }
 
+    // sensor messages
+    inline const command_t set_sensor_reading(void)
+    { return std::make_pair(NETFUN_SENSOR, 0x30); }
 
     // Some helper messages
     // Used to create an empty message for reception
@@ -182,6 +197,20 @@ namespace IPMI
                           const size_t i_len,
                           uint8_t* i_data);
 
+
+    /**
+     * Synchronously send set sensor command
+     * @param[in] i_sensor_num, the sensor number
+     * @param[in] i_operation, see ipmi spec for details
+     * @param[out] o_completion_code, completion code
+     * @param[in] i_len, number of data bytes (1-10)
+     * @param[in] i_data, data bytes
+     */
+    errlHndl_t send_set_sensor_reading_cmd(
+                          set_sensor_reading_request * i_req,
+                          completion_code& o_completion_code );
+
+
     /**
      * Get the max buffer size
      * @param void
@@ -192,5 +221,8 @@ namespace IPMI
     inline size_t max_buffer(void);
 
 }; // end namespace IPMI
+
+
+
 
 #endif
